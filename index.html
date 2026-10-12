@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>FomoCLI — fomo.family in your terminal</title>
-  <meta name="description" content="FomoCLI is a fast, single-binary CLI for fomo.family data. Leaderboards, wallets, PnL, positions, token flow, theses, live trades and an offline cache — without opening a browser.">
+  <meta name="description" content="FomoCLI is a fast, single-binary CLI for fomo.family data. Leaderboards, wallets, PnL, positions, token flow, theses, live trades and an offline cache, without opening a browser.">
   <meta name="theme-color" content="#05060f">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="FomoCLI — fomo.family in your terminal">
-  <meta property="og:description" content="Leaderboards · wallets · PnL · positions · token flow · theses · live trades · offline cache.">
+  <meta property="og:description" content="Leaderboards, wallets, PnL, positions, token flow, theses, live trades and an offline cache. In your terminal.">
   <meta property="og:image" content="assets/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@fomocli">
@@ -20,34 +20,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+  <script>document.documentElement.classList.add("js");</script>
+  <script type="importmap">{ "imports": { "three": "./vendor/three/three.module.min.js" } }</script>
 </head>
-<body>
-  <!-- Cinematic intro -->
-  <div class="intro" id="intro" aria-hidden="true">
-    <div class="intro__bar intro__bar--top"></div>
-    <div class="intro__bar intro__bar--bottom"></div>
-    <img class="intro__logo" src="assets/logo.png" alt="">
-    <div class="intro__flare"></div>
+<body class="is-locked">
+
+  <!-- Boot sequence -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__curtain loader__curtain--top"></div>
+    <div class="loader__curtain loader__curtain--bottom"></div>
+    <div class="loader__inner">
+      <pre class="loader__log" id="bootLog"></pre>
+      <div class="loader__foot">
+        <span class="loader__label">fomocli</span>
+        <span class="loader__count" id="bootCount">000</span>
+      </div>
+      <div class="loader__bar"><i id="bootBar"></i></div>
+    </div>
   </div>
 
-  <canvas id="stars" aria-hidden="true"></canvas>
   <div class="grain" aria-hidden="true"></div>
 
   <header class="nav" id="nav">
     <a class="nav__brand" href="#top" aria-label="FomoCLI home">
-      <img src="assets/logo.png" alt="FomoCLI" width="88" height="33">
+      <img src="assets/logo.png" alt="FomoCLI" width="84" height="32">
     </a>
     <nav class="nav__links" aria-label="Primary">
       <a href="#features">Features</a>
       <a href="#commands">Commands</a>
       <a href="#alpha">Alpha</a>
-      <a href="#offline">Offline</a>
       <a href="#install">Install</a>
+      <a href="docs.html">Docs</a>
     </nav>
-    <div class="nav__social">
+    <div class="nav__right">
       <a class="icon-btn" href="https://x.com/fomocli" target="_blank" rel="noopener" aria-label="FomoCLI on X">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </a>
       <a class="icon-btn" href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener" aria-label="FomoCLI on GitHub">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
@@ -57,177 +66,193 @@
   </header>
 
   <main id="top">
-    <!-- HERO -->
+    <!-- ═════════ HERO ═════════ -->
     <section class="hero" id="hero">
-      <div class="blade blade--left" data-depth="0.04" aria-hidden="true"><i></i></div>
-      <div class="blade blade--right" data-depth="-0.04" aria-hidden="true"><i></i></div>
-      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__stage" aria-hidden="true">
+        <canvas id="webgl"></canvas>
+        <div class="blade blade--left"><i></i></div>
+        <div class="blade blade--right"><i></i></div>
+        <div class="hero__vignette"></div>
+      </div>
 
       <div class="hero__inner">
-        <p class="eyebrow reveal"><span class="dot"></span> Open source · MIT · Go single binary</p>
-        <h1 class="hero__logo">
-          <img src="assets/logo.png" alt="FomoCLI" width="1006" height="381">
-          <span class="hero__shine" aria-hidden="true"></span>
+        <p class="hero__eyebrow" data-hero><span class="dot"></span>Open source &middot; MIT &middot; single Go binary</p>
+        <h1 class="hero__title">
+          <span class="line"><span data-hero-line>fomo.family</span></span>
+          <span class="line"><span data-hero-line><em>in your</em> terminal.</span></span>
         </h1>
-        <p class="hero__tag reveal">fomo.family <span class="muted">in your</span> terminal.</p>
-        <p class="hero__sub reveal">Find the traders who are up, resolve them to their real wallets, read their positions and reasoning, and watch their trades land in realtime — without opening a browser.</p>
-
-        <div class="hero__cta reveal">
+        <p class="hero__sub" data-hero>A fast, single-binary CLI for fomo.family data. Leaderboards, wallets, PnL, positions, token flow, theses and live trades, without opening a browser.</p>
+        <div class="hero__cta" data-hero>
           <button class="install-pill" data-copy="curl -fsSL https://raw.githubusercontent.com/FomoCLI/FomoCLI/main/scripts/install.sh | sh" aria-label="Copy install command">
             <span class="prompt">$</span>
             <code>curl -fsSL …/install.sh | sh</code>
             <span class="install-pill__copy">Copy</span>
           </button>
-          <a class="btn btn--primary" href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener">
+          <a class="btn btn--primary magnetic" href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
             Star on GitHub
           </a>
-          <a class="btn btn--ghost" href="https://x.com/fomocli" target="_blank" rel="noopener">Follow @fomocli</a>
+          <a class="btn btn--ghost magnetic" href="docs.html">Read the docs</a>
         </div>
-
-        <ul class="hero__chips reveal" aria-label="What it covers">
-          <li>Leaderboards</li><li>Wallets</li><li>PnL</li><li>Positions</li><li>Token flow</li><li>Theses</li><li>Live trades</li><li>Offline cache</li>
-        </ul>
       </div>
 
-      <a class="scroll-cue" href="#demo" aria-label="Scroll to demo"><span></span></a>
+      <div class="hero__meta" data-hero>
+        <span>Leaderboards / Wallets / PnL / Live trades</span>
+        <a href="#about" class="hero__scroll">Scroll <i></i></a>
+        <span>Linux &middot; macOS &middot; Windows</span>
+      </div>
     </section>
 
-    <!-- TERMINAL DEMO -->
+    <!-- ═════════ TICKER ═════════ -->
+    <div class="ticker" aria-label="Sample live feed">
+      <div class="ticker__track" id="ticker"></div>
+    </div>
+
+    <!-- ═════════ MANIFESTO ═════════ -->
+    <section class="manifesto" id="about">
+      <p class="kicker" data-scramble>// 00 what it is</p>
+      <p class="manifesto__text" id="manifesto">Find the traders who are up. Resolve them to their real wallets. Read their positions and their reasoning. Watch every trade land in realtime. All from the command line, with every credit accounted for.</p>
+    </section>
+
+    <!-- ═════════ TERMINAL ═════════ -->
     <section class="section demo" id="demo">
-      <div class="section__head reveal">
-        <p class="kicker">// 01 — See it run</p>
-        <h2>The whole market,<br><span class="dim">one keystroke away.</span></h2>
+      <div class="section__head">
+        <p class="kicker" data-scramble>// 01 see it run</p>
+        <h2 class="split">The whole market, <span class="dim">one keystroke away.</span></h2>
       </div>
 
-      <div class="terminal reveal" id="terminal">
-        <div class="terminal__bar">
-          <span class="tl tl--r"></span><span class="tl tl--y"></span><span class="tl tl--g"></span>
-          <span class="terminal__title">fomocli — zsh</span>
-          <div class="terminal__tabs" role="tablist" aria-label="Demo commands">
-            <button role="tab" class="is-active" data-scene="lb">lb</button>
-            <button role="tab" data-scene="radar">radar</button>
-            <button role="tab" data-scene="scan">scan</button>
-            <button role="tab" data-scene="live">live</button>
+      <div class="terminal-wrap">
+        <div class="terminal" id="terminal">
+          <div class="terminal__bar">
+            <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+            <span class="terminal__title">fomocli — zsh</span>
+            <div class="terminal__tabs" role="tablist" aria-label="Demo commands">
+              <button role="tab" class="is-active" data-scene="lb">lb</button>
+              <button role="tab" data-scene="radar">radar</button>
+              <button role="tab" data-scene="trader">trader</button>
+              <button role="tab" data-scene="live">live</button>
+            </div>
           </div>
+          <pre class="terminal__body" id="termBody" aria-live="polite"></pre>
         </div>
-        <pre class="terminal__body" id="termBody" aria-live="polite"></pre>
       </div>
-      <p class="caption reveal">Output from <code>fomocli --demo</code> (sample data). Try it with no API key.</p>
+      <p class="caption">Sample data from <code class="ic">fomocli --demo</code>. Runs with no API key and no network.</p>
     </section>
 
-    <!-- STATS STRIP -->
-    <section class="stats" aria-label="At a glance">
-      <div class="stat reveal"><b data-count="30" data-suffix="+">0</b><span>commands</span></div>
-      <div class="stat reveal"><b data-count="0">0</b><span>credits to stream live</span></div>
-      <div class="stat reveal"><b data-count="1">0</b><span>static binary</span></div>
-      <div class="stat reveal"><b data-count="6">0</b><span>OS / arch targets</span></div>
+    <!-- ═════════ FEATURES (horizontal) ═════════ -->
+    <section class="features" id="features">
+      <div class="features__pin">
+        <div class="features__head">
+          <p class="kicker" data-scramble>// 02 highlights</p>
+          <h2 class="split">Built for traders <span class="dim">who live in the terminal.</span></h2>
+          <div class="features__progress"><i id="featProgress"></i></div>
+        </div>
+        <div class="features__track" id="featTrack">
+          <article class="fcard">
+            <span class="fcard__n">01</span>
+            <svg class="fcard__icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="10" width="36" height="28" rx="5"/><path d="M14 20l6 4-6 4M24 29h10"/></svg>
+            <h3>Everything the API offers</h3>
+            <p>Traders, positions, swaps, multi-chain portfolios, following and followers, spotlight, token flow, dev and insider positions, smart-money holders, theses, comment threads and search.</p>
+          </article>
+          <article class="fcard">
+            <span class="fcard__n">02</span>
+            <svg class="fcard__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="4"/><path d="M15 15a13 13 0 0 0 0 18M33 15a13 13 0 0 1 0 18M9 9a21 21 0 0 0 0 30M39 9a21 21 0 0 1 0 30"/></svg>
+            <h3>Live ticker, zero credits</h3>
+            <p><code class="ic">fomocli live</code> streams the app feed, or the on-chain feed on Growth+, over a WebSocket with auto-reconnect. Streaming costs nothing.</p>
+          </article>
+          <article class="fcard">
+            <span class="fcard__n">03</span>
+            <svg class="fcard__icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="36" height="32" rx="5"/><path d="M6 17h36M20 17v23M28 26h8M28 32h6"/></svg>
+            <h3>Full-screen dashboard</h3>
+            <p><code class="ic">fomocli dash</code> puts the leaderboard, token boards, the live feed and theses in one keyboard-driven TUI.</p>
+          </article>
+          <article class="fcard">
+            <span class="fcard__n">04</span>
+            <svg class="fcard__icon" viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="12" rx="15" ry="5"/><path d="M9 12v12c0 2.8 6.7 5 15 5s15-2.2 15-5V12M9 24v12c0 2.8 6.7 5 15 5s15-2.2 15-5V24"/></svg>
+            <h3>Offline-first</h3>
+            <p>Every response is cached on disk. <code class="ic">--offline</code> replays the last data you saw, and a dropped connection falls back to the cache on its own.</p>
+          </article>
+          <article class="fcard">
+            <span class="fcard__n">05</span>
+            <svg class="fcard__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M26 5L11 27h12l-3 16 17-23H25z"/></svg>
+            <h3>Credit-aware</h3>
+            <p>Every command shows what it cost and what is left. Expensive calls are labeled right in <code class="ic">--help</code>, and cache hits are free.</p>
+          </article>
+          <article class="fcard">
+            <span class="fcard__n">06</span>
+            <svg class="fcard__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M17 9c-5 0-5 3-5 7s-1 7-5 8c4 1 5 4 5 8s0 7 5 7M31 9c5 0 5 3 5 7s1 7 5 8c-4 1-5 4-5 8s0 7-5 7"/></svg>
+            <h3>Scriptable</h3>
+            <p><code class="ic">--json</code> on every command with clean stdout, meaningful exit codes, shell completion and <code class="ic">FOMO_API_KEY</code>.</p>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <!-- FEATURES -->
-    <section class="section" id="features">
-      <div class="section__head reveal">
-        <p class="kicker">// 02 — Highlights</p>
-        <h2>Built for traders<br><span class="dim">who live in the terminal.</span></h2>
-      </div>
-
-      <div class="grid features">
-        <article class="card reveal">
-          <div class="card__icon">⌘</div>
-          <h3>Everything the API offers</h3>
-          <p>Traders, positions, swaps, multi-chain portfolios, following/followers, spotlight, token flow, dev &amp; insider positions, smart-money holders, theses, comment threads, search.</p>
-        </article>
-        <article class="card reveal">
-          <div class="card__icon">◉</div>
-          <h3>Live ticker</h3>
-          <p><code>fomocli live</code> streams the app feed — or the on-chain feed on Growth+ — over a WebSocket with auto-reconnect. Streaming costs <b>0 credits</b>.</p>
-        </article>
-        <article class="card reveal">
-          <div class="card__icon">▦</div>
-          <h3>Full-screen dashboard</h3>
-          <p><code>fomocli dash</code> puts the leaderboard, token boards, the live feed and theses in one keyboard-driven TUI.</p>
-        </article>
-        <article class="card reveal">
-          <div class="card__icon">⇩</div>
-          <h3>Offline-first</h3>
-          <p>Every response is cached on disk. <code>--offline</code> replays the last data you saw, and repeats inside the TTL cost <b>0 credits</b>.</p>
-        </article>
-        <article class="card reveal">
-          <div class="card__icon">⚡</div>
-          <h3>Credit-aware</h3>
-          <p>Every command shows what it cost and what's left. Expensive calls are labeled right in <code>--help</code>.</p>
-        </article>
-        <article class="card reveal">
-          <div class="card__icon">{ }</div>
-          <h3>Scriptable</h3>
-          <p><code>--json</code> on every command, clean stdout, meaningful exit codes, shell completion and <code>FOMO_API_KEY</code>.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- COMMANDS -->
+    <!-- ═════════ COMMANDS ═════════ -->
     <section class="section" id="commands">
-      <div class="section__head reveal">
-        <p class="kicker">// 03 — Commands</p>
-        <h2>Every view,<br><span class="dim">priced up front.</span></h2>
+      <div class="section__head">
+        <p class="kicker" data-scramble>// 03 commands</p>
+        <h2 class="split">Every view, <span class="dim">priced up front.</span></h2>
       </div>
 
-      <div class="cmd reveal">
+      <div class="cmd fade-up">
         <div class="cmd__tabs" role="tablist" aria-label="Command groups">
-          <button role="tab" class="is-active" data-group="market">Market</button>
-          <button role="tab" data-group="traders">Traders</button>
-          <button role="tab" data-group="realtime">Realtime</button>
-          <button role="tab" data-group="alpha">Alpha &amp; sharing</button>
-          <button role="tab" data-group="setup">Setup</button>
+          <button role="tab" class="is-active" aria-selected="true" data-group="market">Market</button>
+          <button role="tab" aria-selected="false" data-group="traders">Traders</button>
+          <button role="tab" aria-selected="false" data-group="realtime">Realtime</button>
+          <button role="tab" aria-selected="false" data-group="alpha">Alpha</button>
+          <button role="tab" aria-selected="false" data-group="setup">Setup</button>
           <span class="cmd__ink" aria-hidden="true"></span>
         </div>
         <div class="cmd__panel" id="cmdPanel" role="tabpanel"></div>
-        <p class="caption">Credit costs as documented at <a href="https://fomoapi.io/docs#credits" target="_blank" rel="noopener">fomoapi.io/docs</a>. Cached responses cost 0.</p>
+        <p class="caption">Cost is in API credits per call. Cached responses cost 0. Full reference in the <a href="docs.html#commands">docs</a>.</p>
       </div>
     </section>
 
-    <!-- ALPHA -->
+    <!-- ═════════ ALPHA ═════════ -->
     <section class="section alpha" id="alpha">
-      <div class="section__head reveal">
-        <p class="kicker">// 04 — Alpha tools</p>
-        <h2>See the swarm<br><span class="dim">before the chart does.</span></h2>
+      <div class="section__head">
+        <p class="kicker" data-scramble>// 04 alpha tools</p>
+        <h2 class="split">See the swarm <span class="dim">before the chart does.</span></h2>
       </div>
 
       <div class="alpha__grid">
-        <article class="alpha__item reveal">
-          <span class="tag">fomocli radar · 0 credits</span>
+        <article class="panel fade-up">
+          <span class="tag">fomocli radar &middot; 0 credits</span>
           <h3>Swarm radar</h3>
-          <p>Alarm when several traders pile into the same token within minutes — or <code>--side sell</code> for coordinated dumps. Tune with <code>--min-traders</code>, <code>--window</code>, <code>--min-usd</code>.</p>
-          <div class="swarm">
-            <p><span class="red">◆ SWARM BUY</span> <b>$STONK</b> <span class="muted">solana · 09:20:25</span></p>
-            <p><b>3 traders</b> · 3 buys · <span class="green">$16.3K</span> in 24m</p>
-            <p><span class="steel">@TEFL0ND0N</span> $10.1K · <span class="steel">@IOnlyBuyTekCoins</span> $3.2K · <span class="steel">@EvilPanda</span> $3K</p>
-            <p class="muted">check it: fomocli scan 6GmAFS…pUNgx</p>
+          <p>An alarm when several traders pile into the same token within minutes, or <code class="ic">--side sell</code> for coordinated dumps.</p>
+          <div class="swarm" id="swarm">
+            <div class="swarm__radar" aria-hidden="true"><i></i><b style="--x:62%;--y:30%"></b><b style="--x:38%;--y:66%"></b><b style="--x:70%;--y:62%"></b></div>
+            <div class="swarm__alert">
+              <p><span class="red">SWARM BUY</span> <b>$STONK</b> <span class="muted">solana &middot; 09:20:25</span></p>
+              <p><b>3 traders</b> &middot; 3 buys &middot; <span class="green">$16.3K</span> in 24m</p>
+              <p class="muted">@TEFL0ND0N $10.1K &middot; @EvilPanda $3K</p>
+            </div>
           </div>
         </article>
 
-        <article class="alpha__item reveal">
-          <span class="tag">fomocli scan · 750 credits</span>
+        <article class="panel fade-up">
+          <span class="tag">fomocli scan &middot; 750 credits</span>
           <h3>Rug scanner</h3>
-          <p>One 0–100 risk score from buy/sell flow, top-10 concentration, dev &amp; insider exits and smart-money holders — with every reason listed.</p>
-          <div class="gauge" data-score="72" aria-label="Example risk score 72 of 100">
+          <p>One 0 to 100 risk score from buy/sell flow, top-10 concentration, dev and insider exits and smart-money holders, with every reason listed.</p>
+          <div class="gauge" data-score="72" aria-label="Example risk score: 72 of 100">
             <svg viewBox="0 0 200 110" aria-hidden="true">
               <path class="gauge__track" d="M15 100 A85 85 0 0 1 185 100"/>
               <path class="gauge__fill" d="M15 100 A85 85 0 0 1 185 100"/>
             </svg>
-            <div class="gauge__val"><b>0</b><span>/100 · HIGH RISK</span></div>
+            <div class="gauge__val"><b>0</b><span>/100 &middot; high risk</span></div>
           </div>
         </article>
 
-        <article class="alpha__item alpha__item--wide reveal">
-          <div class="alpha__text">
-            <span class="tag">fomocli card · 2,750 credits</span>
+        <article class="panel panel--wide fade-up">
+          <div class="panel__text">
+            <span class="tag">fomocli card &middot; 2,750 credits</span>
             <h3>Share cards</h3>
-            <p>A 1200×675 PNG of a trader's PnL, win rate and best trade, ready for X or Telegram. Send it straight out with <code>--send telegram</code>.</p>
+            <p>A 1200&times;675 PNG of a trader's PnL, win rate and best trade, ready for X or Telegram. Send it straight out with <code class="ic">--send telegram</code>.</p>
             <h3 class="mt">Alerts to your phone</h3>
-            <p>Connect a <b>Telegram</b> bot or <b>Discord</b> webhook, then add <code>--notify telegram,discord</code> to <code>radar</code>, <code>live</code>, <code>watch</code> or <code>scan</code>.</p>
+            <p>Connect a Telegram bot or a Discord webhook, then add <code class="ic">--notify telegram,discord</code> to <code class="ic">radar</code>, <code class="ic">live</code>, <code class="ic">watch</code> or <code class="ic">scan</code>.</p>
           </div>
-          <div class="tilt" id="tilt">
+          <div class="tilt" id="tilt" data-hover>
             <img src="assets/card-example.png" alt="Example FomoCLI trader card for @CryptoKaleo showing +$151.4K all-time PnL" width="1200" height="675" loading="lazy">
             <span class="tilt__glare" aria-hidden="true"></span>
           </div>
@@ -235,40 +260,39 @@
       </div>
     </section>
 
-    <!-- OFFLINE -->
+    <!-- ═════════ OFFLINE ═════════ -->
     <section class="section" id="offline">
-      <div class="section__head reveal">
-        <p class="kicker">// 05 — Offline mode</p>
-        <h2>Your data.<br><span class="dim">Even when the wifi isn't.</span></h2>
+      <div class="section__head">
+        <p class="kicker" data-scramble>// 05 offline mode</p>
+        <h2 class="split">Your data. <span class="dim">Even when the wifi isn't.</span></h2>
       </div>
       <ol class="steps">
-        <li class="step reveal">
+        <li class="step fade-up">
           <span class="step__n">01</span>
           <h3>Repeat for free</h3>
-          <p>A command repeated inside the cache TTL (default <code>60s</code>) is served from disk for 0 credits. Skip it with <code>--fresh</code>.</p>
+          <p>A command repeated inside the cache TTL (default <code class="ic">60s</code>) is served from disk for 0 credits. Skip it with <code class="ic">--fresh</code>.</p>
         </li>
-        <li class="step reveal">
+        <li class="step fade-up">
           <span class="step__n">02</span>
           <h3>Automatic fallback</h3>
           <p>If the network drops, fomocli shows the cached copy and tells you how old it is.</p>
         </li>
-        <li class="step reveal">
+        <li class="step fade-up">
           <span class="step__n">03</span>
           <h3>Explicit offline</h3>
-          <p><code>--offline</code> or <code>FOMO_OFFLINE=1</code> never touches the network. Even <code>live --offline</code> replays recorded events.</p>
+          <p><code class="ic">--offline</code> or <code class="ic">FOMO_OFFLINE=1</code> never touches the network. Even <code class="ic">live --offline</code> replays recorded events.</p>
         </li>
       </ol>
-
       <div class="code-split">
-        <div class="code reveal">
-          <div class="code__head">offline</div>
+        <div class="code fade-up">
+          <div class="code__head"><span>offline</span></div>
 <pre><span class="c">fomocli lb --offline</span>                       <span class="muted"># last leaderboard you loaded</span>
 <span class="c">fomocli t CryptoKaleo positions --offline</span>  <span class="muted"># last positions</span>
 <span class="c">fomocli live --offline -n 50</span>               <span class="muted"># replay 50 live events</span>
 <span class="c">fomocli cache ls</span>                           <span class="muted"># what's available offline</span></pre>
         </div>
-        <div class="code reveal">
-          <div class="code__head">scripting</div>
+        <div class="code fade-up">
+          <div class="code__head"><span>scripting</span></div>
 <pre><span class="muted"># Top 10 by volume as CSV</span>
 <span class="c">fomocli lb 7d --json</span> | jq -r <span class="str">'.traders | sort_by(-.volumeUsd)[:10][] | [.handle, .volumeUsd] | @csv'</span>
 
@@ -278,15 +302,14 @@
       </div>
     </section>
 
-    <!-- INSTALL -->
+    <!-- ═════════ INSTALL ═════════ -->
     <section class="section install" id="install">
-      <div class="install__beam" aria-hidden="true"></div>
-      <div class="section__head section__head--center reveal">
-        <p class="kicker">// 06 — Install</p>
-        <h2>Ten seconds<br><span class="dim">to your first leaderboard.</span></h2>
+      <div class="section__head section__head--center">
+        <p class="kicker" data-scramble>// 06 install</p>
+        <h2 class="split">Ten seconds <span class="dim">to your first leaderboard.</span></h2>
       </div>
 
-      <div class="install__box reveal">
+      <div class="install__box fade-up">
         <div class="install__tabs" role="tablist" aria-label="Install method">
           <button role="tab" class="is-active" data-install="script">Script</button>
           <button role="tab" data-install="go">Go 1.23+</button>
@@ -296,45 +319,64 @@
         <div class="install__cmd">
           <span class="prompt">$</span>
           <code id="installCode">curl -fsSL https://raw.githubusercontent.com/FomoCLI/FomoCLI/main/scripts/install.sh | sh</code>
-          <button class="copy" id="installCopy" aria-label="Copy command">Copy</button>
+          <button class="copy" id="installCopy">Copy</button>
         </div>
         <div class="quick">
-<pre><span class="c">fomocli --demo lb</span>                 <span class="muted"># look around with sample data — no key needed</span>
-<span class="c">fomocli auth login</span>                <span class="muted"># paste your key (free: fomoapi.io/dashboard)</span>
+<pre><span class="c">fomocli --demo lb</span>                 <span class="muted"># look around with sample data, no key needed</span>
+<span class="c">fomocli auth login</span>                <span class="muted"># paste your API key</span>
 <span class="c">fomocli lb</span>                        <span class="muted"># top traders, 24h</span>
 <span class="c">fomocli trader CryptoKaleo</span>        <span class="muted"># wallets, PnL by window, stats</span>
 <span class="c">fomocli live --chain robinhood</span>    <span class="muted"># realtime ticker</span>
 <span class="c">fomocli dash</span>                      <span class="muted"># full-screen dashboard</span></pre>
         </div>
       </div>
+    </section>
 
-      <div class="final-cta reveal">
-        <a class="btn btn--primary btn--lg" href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener">Get FomoCLI on GitHub</a>
-        <a class="btn btn--ghost btn--lg" href="https://github.com/FomoCLI/FomoCLI/releases" target="_blank" rel="noopener">Download a release</a>
+    <!-- ═════════ OUTRO ═════════ -->
+    <section class="outro" id="outro">
+      <p class="outro__word" id="outroWord" aria-hidden="true">FOMOCLI</p>
+      <div class="outro__cta">
+        <a class="btn btn--primary btn--lg magnetic" href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener">Get FomoCLI on GitHub</a>
+        <a class="btn btn--ghost btn--lg magnetic" href="docs.html">Read the docs</a>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <img class="footer__banner" src="assets/banner.jpg" alt="" loading="lazy" aria-hidden="true">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="assets/logo.png" alt="FomoCLI" width="120" height="45">
+        <img src="assets/logo.png" alt="FomoCLI" width="108" height="41" loading="lazy">
         <p>fomo.family in your terminal.</p>
       </div>
-      <div class="footer__links">
-        <a href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://x.com/fomocli" target="_blank" rel="noopener">X / Twitter</a>
-        <a href="https://github.com/FomoCLI/FomoCLI/releases" target="_blank" rel="noopener">Releases</a>
-        <a href="https://github.com/FomoCLI/FomoCLI/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
-        <a href="https://fomoapi.io/docs" target="_blank" rel="noopener">FOMO API docs</a>
+      <div class="footer__cols">
+        <div class="footer__col">
+          <h4>Product</h4>
+          <a href="docs.html">Documentation</a>
+          <a href="docs.html#commands">Commands</a>
+          <a href="https://github.com/FomoCLI/FomoCLI/releases" target="_blank" rel="noopener">Releases</a>
+          <a href="https://github.com/FomoCLI/FomoCLI/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+        </div>
+        <div class="footer__col">
+          <h4>Community</h4>
+          <a href="https://github.com/FomoCLI/FomoCLI" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://x.com/fomocli" target="_blank" rel="noopener">X</a>
+          <a href="https://github.com/FomoCLI/FomoCLI/issues" target="_blank" rel="noopener">Issues</a>
+        </div>
       </div>
-      <p class="footer__legal">FomoCLI is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or sponsored by fomo.family or fomoapi.io. Data is provided by the FOMO API under its terms. Nothing here is financial advice. FomoCLI is read-only: it never places trades or touches wallet keys. · MIT License</p>
+      <div class="footer__legal">
+        <p>FomoCLI is an independent, unofficial open-source project, not affiliated with, endorsed by, or sponsored by fomo.family. Nothing here is financial advice. FomoCLI is read-only: it never places trades or touches wallet keys.</p>
+        <span>MIT License</span>
+      </div>
     </div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite">Copied to clipboard</div>
 
-  <script src="script.js"></script>
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/home.js"></script>
+  <script type="module" src="js/scene.js"></script>
 </body>
 </html>
